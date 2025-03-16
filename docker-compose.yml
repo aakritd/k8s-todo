@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  nginx:
+    build:
+      context: ./nginx #Dockerfile's location
+    container_name: nginx
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - django
+    networks:
+      - todoList
+
+  django:
+    build:
+      context: .
+    container_name: django_cont
+    env_file:
+      - ".env"
+    restart: always
+    networks: 
+      - todoList
+    command: sh -c "python manage.py migrate --no-input && gunicorn todoList.wsgi --bind 0.0.0.0:8000"
+    depends_on:
+      - db
+    healthcheck: 
+      test: ["CMD-SHELL","curl -f http://localhost:8000/admin || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  db:
+    image: mysql
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: todolist
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - todoList
+    restart: always
+    healthcheck: 
+      test: ["CMD","mysqladmin", "ping", "-h", "localhost", "-uroot","-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    
+
+volumes:
+  mysql-data:
+
+networks:
+  todoList:
+

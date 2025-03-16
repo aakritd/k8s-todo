@@ -1,0 +1,11 @@
+<!-- {% load static %} -->
+
+<a href="{% url 'todoList' %}">Go Back</a>
+<head>
+    <!-- <link rel="stylesheet" href="{% static 'styles.css' %}"> -->
+</head>
+<form method="POST">
+    {% csrf_token %}
+    <p>Are you sure you wanna delete this task? "{{task}}"</p>
+    <input type="submit" value="Delete">
+</form>

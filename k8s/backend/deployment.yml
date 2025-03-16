@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+  namespace: web-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: aakritdongol/backend-img:latest
+        ports:
+        - containerPort: 8000
+        env:
+        # MySQL Database Settings
+        - name: DB_NAME
+          value: "todoList"
+        - name: DB_USER
+          value: "root"
+        - name: DB_PASSWORD
+          value: "root"
+        - name: DB_HOST
+          value: "db"
+        - name: DB_PORT
+          value: "3306"
